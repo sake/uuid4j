@@ -100,16 +100,25 @@ public class StandardUUID extends UUID {
 			.get();
 	}
 
+	private static class TimeV1Holder {
+		static final TimeV1Supplier INSTANCE = new TimeV1Supplier();
+	}
 	public static StandardUUID createTimeV1() {
-		return new TimeV1Supplier().get();
+		return TimeV1Holder.INSTANCE.get();
 	}
 
+	private static class TimeV6Holder {
+		static final TimeV6Supplier INSTANCE = new TimeV6Supplier();
+	}
 	public static StandardUUID createTimeV6() {
-		return new TimeV6Supplier().get();
+		return TimeV6Holder.INSTANCE.get();
 	}
 
+	private static class TimeV7Holder {
+		static final TimeV7Supplier INSTANCE = new TimeV7Supplier();
+	}
 	public static StandardUUID createTimeV7() {
-		return new TimeV7Supplier().get();
+		return TimeV7Holder.INSTANCE.get();
 	}
 
 }
