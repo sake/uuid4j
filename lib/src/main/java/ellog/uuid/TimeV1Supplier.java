@@ -21,14 +21,17 @@ package ellog.uuid;
 public class TimeV1Supplier extends TimeBasedSupplier {
 
 	public TimeV1Supplier() {
-		super(StandardVersion.TIME_BASED);
+		this(new TimeProviderV1());
+	}
+	public TimeV1Supplier(TimeProviderV1 timeProvider) {
+		super(StandardVersion.TIME_BASED, timeProvider);
 		loadHostAddress();
 		builder.setRandomClockSequence();
 	}
 
 	@Override
 	public StandardUUID get() {
-		long ts = timeProvider.getNextTimestamp100ns();
+		long ts = timeProvider.getNextRefTimestamp100ns();
 		return builder.setTimestampLow((int) ts)
 			.setTimestampMid((short) (ts >> 32))
 			.setTimestampHigh((short) (ts >> 48))

@@ -18,25 +18,51 @@
 
 package ellog.uuid;
 
-import java.time.Clock;
 
-public class TimeV7Supplier extends TimeBasedSupplier {
+public class TimeV7Supplier extends StandardUUIDSupplierBase {
 
-	protected Clock clock = Clock.systemUTC();
+	protected TimeProviderV7 timeProvider;
 
-	public TimeV7Supplier() {
+	public TimeV7Supplier(TimeProviderV7 timeProvider) {
 		super(StandardVersion.TIME_BASED_ORDERED);
-		loadRandomAddress();
-		builder.setRandomClockSequence();
+		this.timeProvider = timeProvider;
+	}
+	public TimeV7Supplier() {
+		this(new TimeProviderV7());
+	}
+
+	private short counterOrRand(int numCounterBits, int counter, int numWidth) {
+		int result = 0;
+		// make sure we have no negative numbers
+		numCounterBits = Math.max(0, numCounterBits);
+
+		if (numCounterBits <= numWidth) {
+			if (numCounterBits < numWidth) {
+				result = (short) (builder.getSecRandom().nextInt());
+			}
+			// set counter to leading bits
+			result = (short) (result | (counter << (numWidth - numCounterBits)));
+		} else {
+			result = counter;
+		}
+
+		return (short) result;
 	}
 
 	@Override
 	public StandardUUID get() {
-		long ts = clock.millis();
-		return builder.setTimestampLow((int) ts >> 16)
+		TimeProviderV7.TimeAndCounter tc = timeProvider.getNext();
+		long ts = tc.time;
+
+		int counter = tc.counter;
+		int numCounterBits = tc.numCounterBits();
+		short tsHigh = counterOrRand(numCounterBits, counter, 12);
+		short cs = counterOrRand(numCounterBits - 12, counter >>> 12, 14);
+
+		return builder.setTimestampLow((int) (ts >>> 16))
 			.setTimestampMid((short) ts)
-			.setTimestampHigh((short) builder.getSecRandom().nextInt())
-			.setRandomClockSequence()
+			.setTimestampHigh(tsHigh)
+			.setClockSequence(cs)
 			.setRandomNode()
 			.build();
 	}

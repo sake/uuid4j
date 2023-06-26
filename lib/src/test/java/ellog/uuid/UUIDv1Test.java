@@ -28,15 +28,14 @@ public class UUIDv1Test {
 
 	@Test
 	void genMocked() {
-		TimeV1Supplier v1Supplier = new TimeV1Supplier();
-		v1Supplier.setClockSequence(0xF234);
-		v1Supplier.setAddress(0xFFFFCBA987654321L);
-		v1Supplier.timeProvider = new TimeProvider() {
+		TimeV1Supplier v1Supplier = new TimeV1Supplier(new TimeProviderV1(false) {
 			@Override
-			public long getNextTimestamp100ns() {
+			public long getNextRefTimestamp100ns() {
 				return 0xF123456789ABCDEFL;
 			}
-		};
+		});
+		v1Supplier.setClockSequence(0xF234);
+		v1Supplier.setAddress(0xFFFFCBA987654321L);
 
 		StandardUUID uuid = v1Supplier.get();
 
@@ -105,7 +104,9 @@ public class UUIDv1Test {
 			| mid
 			| low;
 		long tsMillis = ts / 10_000;
-		Instant tsInst = TimeProvider.REFERENCE.plusMillis(tsMillis);
+		Instant tsInst = TimeProviderV1.REFERENCE.plusMillis(tsMillis);
+		long tsNanos = ts % (1_000_000 / 100);
+		tsInst = tsInst.plusNanos(tsNanos);
 		return tsInst;
 	}
 }

@@ -24,10 +24,14 @@ import java.nio.ByteBuffer;
 import java.util.Collections;
 
 public abstract class TimeBasedSupplier extends StandardUUIDSupplierBase {
-	protected TimeProvider timeProvider = TimeProvider.GLOBAL;
+	protected final TimeProviderV1 timeProvider;
 
 	public TimeBasedSupplier(StandardVersion version) {
+		this(version, new TimeProviderV1());
+	}
+	public TimeBasedSupplier(StandardVersion version, TimeProviderV1 timeProvider) {
 		super(version);
+		this.timeProvider = timeProvider;
 	}
 
 	public TimeBasedSupplier setAddress(long address) {

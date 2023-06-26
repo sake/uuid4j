@@ -22,49 +22,50 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 
-public class TimeProvider {
+public class TimeProviderV1 {
 
 	public static final Instant REFERENCE = Instant.parse("1582-10-15T00:00:00Z");
-	public static final TimeProvider GLOBAL = new TimeProvider();
-
-	static {
-		GLOBAL.withLock = true;
-	}
 
 	protected Instant lastInstant = Instant.MIN;
 	protected Clock clock = Clock.systemUTC();
-	protected boolean withLock = false;
+	protected final boolean withLock;
 
+	public TimeProviderV1() {
+		this(true);
+	}
+	public TimeProviderV1(boolean withLock) {
+		this.withLock = withLock;
+	}
 
-	public TimeProvider setClock(Clock clock) {
+	public TimeProviderV1 setClock(Clock clock) {
 		this.clock = clock;
 		return this;
 	}
 
-	public Instant getNext() {
+	public Instant getNext(long nanoPrecision) {
 		if (withLock) {
-			return getNextLockedInternal();
+			return getNextLockedInternal(nanoPrecision);
 		} else {
-			return getNextInternal();
+			return getNextInternal(nanoPrecision);
 		}
 	}
 
-	private synchronized Instant getNextLockedInternal() {
-		return getNextInternal();
+	private synchronized Instant getNextLockedInternal(long nanoPrecision) {
+		return getNextInternal(nanoPrecision);
 	}
-	private Instant getNextInternal() {
+	private Instant getNextInternal(long nanoPrecision) {
 		Instant nextInstant = clock.instant();
 		if (nextInstant.isAfter(lastInstant)) {
 			lastInstant = nextInstant;
 			return nextInstant;
 		} else {
-			lastInstant = lastInstant.plusNanos(1);
+			lastInstant = lastInstant.plusNanos(nanoPrecision);
 			return lastInstant;
 		}
 	}
 
-	public long getNextTimestamp(long nanoPrecision) {
-		Instant next = getNext();
+	public long getNextRefTimestamp(long nanoPrecision) {
+		Instant next = getNext(nanoPrecision);
 		Duration interval = Duration.between(REFERENCE, next);
 		long seconds = interval.getSeconds() * (1_000_000_000 / nanoPrecision);
 		long nanos = interval.getNano() / nanoPrecision;
@@ -72,7 +73,7 @@ public class TimeProvider {
 		return result;
 	}
 
-	public long getNextTimestamp100ns() {
-		return getNextTimestamp(100);
+	public long getNextRefTimestamp100ns() {
+		return getNextRefTimestamp(100);
 	}
 }

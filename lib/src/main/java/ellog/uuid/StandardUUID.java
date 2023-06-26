@@ -64,11 +64,19 @@ public class StandardUUID extends UUID {
 	}
 
 	public long timestamp() {
-		long ts
-			= (timeHiAndVersion() & 0x0FFF) << (60-12)
-			| (timeMid() & 0xFFFFL) << (60-12-16)
-			| timeLow();
-		return ts;
+		if (version() == StandardVersion.TIME_BASED) {
+			long ts
+				= (long) (timeHiAndVersion() & 0x0FFF) << (60-12)
+				| (timeMid() & 0xFFFFL) << (60-12-16)
+				| timeLow();
+			return ts;
+		} else {
+			long ts
+				= ((long) timeLow() << (16 + 12))
+				| (timeMid() << 12)
+				| (timeHiAndVersion() & 0x0FFF);
+			return ts;
+		}
 	}
 
 	public short clockSequence() {

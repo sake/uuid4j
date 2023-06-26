@@ -18,19 +18,20 @@
 
 package ellog.uuid;
 
-public class TimeV6Supplier extends TimeBasedSupplier {
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-	public TimeV6Supplier() {
-		super(StandardVersion.TIME_BASED_ORDERED_LEGACY);
-		loadRandomAddress();
-		builder.setRandomClockSequence();
-	}
+public class UUIDv7Test {
 
-	@Override
-	public StandardUUID get() {
-		long ts = timeProvider.getNextRefTimestamp100ns();
-		return builder.setTimestamp(ts)
-			.build();
+	@Test
+	void testOrdered() {
+		TimeV7Supplier supplier = new TimeV7Supplier();
+		StandardUUID uuid1 = supplier.get();
+		StandardUUID uuid2 = supplier.get();
+
+		// check that the compareTo is working properly
+		assertTrue(uuid1.compareTo(uuid2) < 0);
+		assertTrue(uuid2.compareTo(uuid1) > 0);
 	}
 
 }
