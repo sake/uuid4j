@@ -78,6 +78,23 @@ public class UUIDv1Test {
 		assertEquals(uuid1.variant(), uuid2.variant());
 	}
 
+	@Test
+	void checkIncreasedTime() {
+		TimeV1Supplier v1Supplier = new TimeV1Supplier();
+		StandardUUID uuid1 = v1Supplier.get();
+		StandardUUID uuid2 = v1Supplier.get();
+
+		assertNotEquals(uuid1, uuid2);
+		assertNotEquals(uuid1.timestamp(), uuid2.timestamp());
+		assertEquals(uuid1.clockSequence(), uuid2.clockSequence());
+		assertEquals(uuid1.node(), uuid2.node());
+		assertEquals(uuid1.version(), uuid2.version());
+		assertEquals(uuid1.variant(), uuid2.variant());
+
+		Instant t1 = reconstructTimestamp(uuid1);
+		Instant t2 = reconstructTimestamp(uuid2);
+		assertTrue(t2.isAfter(t1));
+	}
 
 	private Instant reconstructTimestamp(StandardUUID uuid) {
 		long high = ((long) uuid.timeHiAndVersion() & 0x0FFF) << 48;
