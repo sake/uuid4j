@@ -58,6 +58,10 @@ public abstract class UUID implements Comparable<UUID> {
 		}
 	}
 
+	public byte[] getBytes() {
+		return dataBuf.array();
+	}
+
 	public static UUID parseHex(String uuid) {
 		Matcher match = HEX_PATTERN.matcher(uuid);
 		if (match.matches()) {

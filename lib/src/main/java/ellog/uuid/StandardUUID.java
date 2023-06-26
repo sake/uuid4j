@@ -24,6 +24,11 @@ public class StandardUUID extends UUID {
 		super(octets, Variant.IETF);
 	}
 
+	public static StandardUUID parseHex(String uuid) throws ClassCastException {
+		UUID parsedUuid = UUID.parseHex(uuid);
+		return StandardUUID.class.cast(parsedUuid);
+	}
+
 	protected int timeLow() {
 		return dataBuf.getInt(0);
 	}
@@ -78,12 +83,25 @@ public class StandardUUID extends UUID {
 
 
 	public static StandardUUID createRandom() {
-		StandardUUIDBuilder builder = new StandardUUIDBuilder();
-		builder = builder.setVersion(StandardVersion.RANDOM)
-			.setRandomTimestamp()
-			.setRandomClockSequence()
-			.setRandomNode();
-		return builder.build();
+		return new Version4Supplier().get();
+	}
+
+	public static StandardUUID createNameBased(StandardUUID namespace, byte[] name) {
+		return NameBasedSupplier.version5(namespace)
+			.setData(name)
+			.get();
+	}
+
+	public static StandardUUID createTimeV1() {
+		return new TimeV1Supplier().get();
+	}
+
+	public static StandardUUID createTimeV6() {
+		return new TimeV6Supplier().get();
+	}
+
+	public static StandardUUID createTimeV7() {
+		return new TimeV7Supplier().get();
 	}
 
 }

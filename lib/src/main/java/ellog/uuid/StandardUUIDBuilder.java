@@ -61,6 +61,20 @@ public class StandardUUIDBuilder {
 		return this;
 	}
 
+	public StandardUUIDBuilder setTimestampLow(int timestampLow) {
+		this.timestamp = timestamp | (timestampLow << 28);
+		return this;
+	}
+	public StandardUUIDBuilder setTimestampMid(short timestampMid) {
+		this.timestamp = timestamp | (timestampMid << 12);
+		return this;
+	}
+	public StandardUUIDBuilder setTimestampHigh(short timestampLow) {
+		// 12 bits
+		this.timestamp = timestamp | (timestampLow & 0x0FFF);
+		return this;
+	}
+
 	public StandardUUIDBuilder setRandomTimestamp() {
 		return setTimestamp(getSecRandom().nextLong());
 	}
@@ -81,6 +95,10 @@ public class StandardUUIDBuilder {
 
 	public StandardUUIDBuilder setRandomNode() {
 		return setNode(getSecRandom().nextLong());
+	}
+	public StandardUUIDBuilder setRandomNodeAddress() {
+		long addr = getSecRandom().nextLong();
+		return setNode(addr | (1 << 40));
 	}
 
 	public StandardUUID build() {
