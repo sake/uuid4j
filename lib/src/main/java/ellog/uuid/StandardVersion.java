@@ -36,10 +36,10 @@ public enum StandardVersion {
 
 	public static StandardVersion fromInt(int value) {
 		StandardVersion[] versions = StandardVersion.values();
-		if (value >= versions.length) {
+		if (value <= 0 || value > versions.length) {
 			throw new IllegalArgumentException("Invalid UUID version: " + value);
 		} else {
-			return versions[value];
+			return versions[value-1];
 		}
 	}
 }

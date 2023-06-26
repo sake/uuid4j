@@ -28,7 +28,9 @@ public class StandardUUIDBuilder {
 	}
 
 	private byte version;
-	private long timestamp;
+	private int tsLow;
+	private short tsMid;
+	private short tsHigh;
 	private short clockSequence;
 	private long node;
 
@@ -56,22 +58,23 @@ public class StandardUUIDBuilder {
 		return setVersion(version.value);
 	}
 
-	public StandardUUIDBuilder setTimestamp(long timestamp) {
-		this.timestamp = timestamp & 0x0FFFFFFFFFFFFFFFL;
+	public StandardUUIDBuilder setTimestamp(long ts) {
+		this.tsHigh = (short) (ts);
+		this.tsMid = (short) (ts >>> 12);
+		this.tsLow = (int) (ts >>> 28);
 		return this;
 	}
 
 	public StandardUUIDBuilder setTimestampLow(int timestampLow) {
-		this.timestamp = timestamp | (timestampLow << 28);
+		this.tsLow = timestampLow;
 		return this;
 	}
 	public StandardUUIDBuilder setTimestampMid(short timestampMid) {
-		this.timestamp = timestamp | (timestampMid << 12);
+		this.tsMid = timestampMid;
 		return this;
 	}
-	public StandardUUIDBuilder setTimestampHigh(short timestampLow) {
-		// 12 bits
-		this.timestamp = timestamp | (timestampLow & 0x0FFF);
+	public StandardUUIDBuilder setTimestampHigh(short timestampHigh) {
+		this.tsHigh = timestampHigh;
 		return this;
 	}
 
@@ -85,7 +88,7 @@ public class StandardUUIDBuilder {
 	}
 
 	public StandardUUIDBuilder setRandomClockSequence() {
-		return setClockSequence(getSecRandom().nextInt(0x4000));
+		return setClockSequence(getSecRandom().nextInt());
 	}
 
 	public StandardUUIDBuilder setNode(long node) {
@@ -105,9 +108,10 @@ public class StandardUUIDBuilder {
 		byte[] octets = new byte[16];
 		ByteBuffer buf = ByteBuffer.wrap(octets);
 
-		buf.putInt((int) (timestamp & 0xFFFFFFFFL));
-		buf.putShort((short) ((timestamp >>> 32) & 0xFFFFL));
-		buf.putShort((short) (((timestamp >>> 48) & 0x0FFF) | (version << 12)));
+		buf.putInt(tsLow);
+		buf.putShort(tsMid);
+		// only 12 bits used
+		buf.putShort((short) ((tsHigh & 0x0FFF) | (version << 12)));
 		buf.putShort((short) (clockSequence | (0b10 << 14)));
 		buf.putShort((short) (node >>> 32));
 		buf.putInt((int) (node & 0xFFFFFFFF));

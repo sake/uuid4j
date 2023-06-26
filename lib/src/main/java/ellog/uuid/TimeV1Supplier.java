@@ -35,4 +35,9 @@ public class TimeV1Supplier extends TimeBasedSupplier {
 			.build();
 	}
 
+	public TimeV1Supplier randomClockSequence() {
+		builder.setRandomClockSequence();
+		return this;
+	}
+
 }

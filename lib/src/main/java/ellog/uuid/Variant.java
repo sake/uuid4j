@@ -20,7 +20,7 @@ package ellog.uuid;
 
 public enum Variant {
 	NCS,
-	IETF,
+	RFC_4122,
 	MICROSOFT,
 	RESERVED;
 
@@ -38,7 +38,7 @@ public enum Variant {
 		if ((variantValue & 0b100) == 0b000) {
 			return NCS;
 		} else if ((variantValue & 0b110) == 0b100) {
-			return IETF;
+			return RFC_4122;
 		} else {
 			if ((variantValue & 0b1) == 0b0) {
 				return MICROSOFT;

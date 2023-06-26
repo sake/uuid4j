@@ -70,10 +70,9 @@ public abstract class TimeBasedSupplier extends StandardUUIDSupplierBase {
 		return this;
 	}
 
-	public TimeBasedSupplier setClockSequence(int sequence) {
+	protected TimeBasedSupplier setClockSequence(int sequence) {
 		builder.setClockSequence(sequence);
 		return this;
 	}
-
 
 }

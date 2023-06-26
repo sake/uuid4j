@@ -88,7 +88,7 @@ public abstract class UUID implements Comparable<UUID> {
 
 	protected static UUID buildVariantObject(byte[] uuidData) {
 		switch (Variant.fromVariantOctet(uuidData[8])) {
-			case IETF:
+			case RFC_4122:
 				return new StandardUUID(uuidData);
 			case MICROSOFT:
 			case RESERVED:

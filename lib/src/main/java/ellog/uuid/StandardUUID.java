@@ -21,7 +21,7 @@ package ellog.uuid;
 public class StandardUUID extends UUID {
 
 	public StandardUUID(byte[] octets) {
-		super(octets, Variant.IETF);
+		super(octets, Variant.RFC_4122);
 	}
 
 	public static StandardUUID parseHex(String uuid) throws ClassCastException {
