@@ -21,14 +21,16 @@ package ellog.uuid;
 
 public class TimeV7Supplier extends StandardUUIDSupplierBase {
 
-	protected TimeProviderV7 timeProvider;
+	protected final TimeProviderV7 timeProvider;
+	protected final int fixedCounterLength;
 
-	public TimeV7Supplier(TimeProviderV7 timeProvider) {
+	public TimeV7Supplier(TimeProviderV7 timeProvider, int counterLength) {
 		super(StandardVersion.TIME_BASED_ORDERED);
 		this.timeProvider = timeProvider;
+		this.fixedCounterLength = counterLength;
 	}
 	public TimeV7Supplier() {
-		this(new TimeProviderV7());
+		this(new TimeProviderV7(), 12);
 	}
 
 	private short counterOrRand(int numCounterBits, int counter, int numWidth) {
@@ -56,8 +58,12 @@ public class TimeV7Supplier extends StandardUUIDSupplierBase {
 
 		int counter = tc.counter;
 		int numCounterBits = tc.numCounterBits();
-		short tsHigh = counterOrRand(numCounterBits, counter, 12);
-		short cs = counterOrRand(numCounterBits - 12, counter >>> 12, 14);
+		if (numCounterBits > fixedCounterLength) {
+			// TODO: handle counter overflow properly
+			System.err.println("UUID counter overflow. Consider increasing the counter length to a value bigger than " + numCounterBits + ".");
+		}
+		short tsHigh = counterOrRand(fixedCounterLength, counter, 12);
+		short cs = counterOrRand(fixedCounterLength - 12, counter >>> 12, 14);
 
 		return builder.setTimestampLow((int) (ts >>> 16))
 			.setTimestampMid((short) ts)
