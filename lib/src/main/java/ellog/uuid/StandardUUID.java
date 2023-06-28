@@ -18,7 +18,11 @@
 
 package ellog.uuid;
 
-public class StandardUUID extends UUID {
+import java.io.Serializable;
+
+public class StandardUUID extends UUID implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	public StandardUUID(byte[] octets) {
 		super(octets, Variant.RFC_4122);
@@ -30,28 +34,28 @@ public class StandardUUID extends UUID {
 	}
 
 	protected int timeLow() {
-		return dataBuf.getInt(0);
+		return dataBuf().getInt(0);
 	}
 
 	protected short timeMid() {
-		return dataBuf.getShort(4);
+		return dataBuf().getShort(4);
 	}
 
 	protected short timeHiAndVersion() {
-		return dataBuf.getShort(6);
+		return dataBuf().getShort(6);
 	}
 
 	protected byte clockSeqHiAndReserved() {
-		return dataBuf.get(8);
+		return dataBuf().get(8);
 	}
 
 	protected byte clockSeqLow() {
-		return dataBuf.get(9);
+		return dataBuf().get(9);
 	}
 
 	public byte[] nodeBytes() {
 		byte[] result = new byte[6];
-		dataBuf.get(result, 10, 6);
+		dataBuf().get(result, 10, 6);
 		return result;
 	}
 
@@ -84,7 +88,7 @@ public class StandardUUID extends UUID {
 	}
 
 	public long node() {
-		long data = dataBuf.getLong(8);
+		long data = dataBuf().getLong(8);
 		// remove the two bytes which are too much (node is 48 bits)
 		return data & 0x0000FFFFFFFFFFFFL;
 	}

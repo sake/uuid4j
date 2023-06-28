@@ -18,7 +18,11 @@
 
 package ellog.uuid;
 
-public class UnknownUUID extends UUID {
+import java.io.Serializable;
+
+public class UnknownUUID extends UUID implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	public UnknownUUID(byte[] octets) {
 		super(octets);

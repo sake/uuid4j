@@ -19,6 +19,9 @@
 package ellog.uuid;
 
 import org.junit.jupiter.api.Test;
+
+import java.io.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UUIDTest {
@@ -73,6 +76,28 @@ class UUIDTest {
 		assertTrue(n1.compareTo(n2) == 0);
 		assertTrue(med1.compareTo(med2) == 0);
 		assertTrue(m1.compareTo(m2) == 0);
+	}
+
+	@Test
+	void serialization() throws IOException, ClassNotFoundException {
+		UUID u1 = UUID.parseHex("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
+		UUID reread1 = serializeDeserialize(u1);
+		assertEquals(u1, reread1);
+
+		UUID u2 = UUID.parseHex("89ABCDEF-4567-1123-B234-CBA987654321");
+		UUID reread2 = serializeDeserialize(u2);
+		assertEquals(u2, reread2);
+	}
+
+	UUID serializeDeserialize(UUID input) throws IOException, ClassNotFoundException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream oout = new ObjectOutputStream(out);
+		oout.writeObject(input);
+
+		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+		ObjectInputStream oin = new ObjectInputStream(in);
+		UUID output = (UUID) oin.readObject();
+		return output;
 	}
 
 }

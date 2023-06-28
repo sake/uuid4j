@@ -18,6 +18,8 @@
 
 package ellog.uuid;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.net.URI;
 import java.nio.ByteBuffer;
@@ -25,7 +27,9 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class UUID implements Comparable<UUID> {
+public abstract class UUID implements Comparable<UUID>, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	public static final Pattern HEX_PATTERN = Pattern.compile(
 		"^([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$",
@@ -41,14 +45,26 @@ public abstract class UUID implements Comparable<UUID> {
 		MAX_UUID = new UnknownUUID(maxBytes);
 	}
 
-	protected final ByteBuffer dataBuf;
+	/**
+	 * Private buffer object.
+	 *
+	 * Can't be final because of serialization, so it's better to have it private.
+ 	 */
+	private transient ByteBuffer dataBuffer;
+	/**
+	 * The buffer containing the UUID octets.
+	 * @return The buffer containing the UUID octets.
+	 */
+	protected final ByteBuffer dataBuf() {
+		return dataBuffer;
+	}
 
 	protected UUID(byte[] octets) {
 		if (octets.length != 16) {
 			throw new IllegalArgumentException("UUIDs must be 16 octets long");
 		}
-		this.dataBuf = ByteBuffer.allocate(16);
-		this.dataBuf.put(octets);
+		this.dataBuffer = ByteBuffer.allocate(16);
+		this.dataBuffer.put(octets);
 	}
 
 	protected UUID(byte[] octets, Variant expectedVariant) {
@@ -59,7 +75,7 @@ public abstract class UUID implements Comparable<UUID> {
 	}
 
 	public byte[] getBytes() {
-		return dataBuf.array();
+		return dataBuf().array();
 	}
 
 	public static UUID parseHex(String uuid) {
@@ -99,33 +115,33 @@ public abstract class UUID implements Comparable<UUID> {
 	}
 
 	public byte variantRaw() {
-		return Variant.numFromVariantOctet(dataBuf.get(8));
+		return Variant.numFromVariantOctet(dataBuf().get(8));
 	}
 
 	public Variant variant() {
-		return Variant.fromVariantOctet(dataBuf.get(8));
+		return Variant.fromVariantOctet(dataBuf().get(8));
 	}
 
 	@Override
 	public String toString() {
 		return String.format("%08x-%04x-%04x-%04x-%04x%08x",
-			dataBuf.getInt(0),
-			dataBuf.getShort(4),
-			dataBuf.getShort(6),
-			dataBuf.getShort(8),
-			dataBuf.getShort(10),
-			dataBuf.getInt(12)
+			dataBuf().getInt(0),
+			dataBuf().getShort(4),
+			dataBuf().getShort(6),
+			dataBuf().getShort(8),
+			dataBuf().getShort(10),
+			dataBuf().getInt(12)
 		);
 	}
 
 	public String toStringDecimal() {
-		BigInteger bigInt = new BigInteger(dataBuf.array());
+		BigInteger bigInt = new BigInteger(dataBuf().array());
 		return bigInt.toString(10);
 	}
 
 	public String toStringBinary() {
-		return String.format("%64s", Long.toBinaryString(dataBuf.getLong(0))).replace(' ', '0')
-			+ String.format("%64s", Long.toBinaryString(dataBuf.getLong(8))).replace(' ', '0');
+		return String.format("%64s", Long.toBinaryString(dataBuf().getLong(0))).replace(' ', '0')
+			+ String.format("%64s", Long.toBinaryString(dataBuf().getLong(8))).replace(' ', '0');
 	}
 
 	public URI toUrn() {
@@ -140,7 +156,7 @@ public abstract class UUID implements Comparable<UUID> {
 	public boolean equals(Object obj) {
 		if (obj instanceof UUID) {
 			UUID other = (UUID) obj;
-			return Arrays.equals(dataBuf.array(), other.dataBuf.array());
+			return Arrays.equals(dataBuf().array(), other.dataBuf().array());
 		} else {
 			return false;
 		}
@@ -148,17 +164,30 @@ public abstract class UUID implements Comparable<UUID> {
 
 	@Override
 	public int compareTo(UUID o) {
-		long h1 = this.dataBuf.getLong(0);
-		long h2 = o.dataBuf.getLong(0);
+		long h1 = this.dataBuf().getLong(0);
+		long h2 = o.dataBuf().getLong(0);
 		int c1 = Long.compareUnsigned(h1, h2);
 		if (c1 != 0) {
 			return c1;
 		} else {
-			long l1 = this.dataBuf.getLong(8);
-			long l2 = o.dataBuf.getLong(8);
+			long l1 = this.dataBuf().getLong(8);
+			long l2 = o.dataBuf().getLong(8);
 			int c2 = Long.compareUnsigned(l1, l2);
 			return c2;
 		}
+	}
+
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		out.defaultWriteObject();
+		out.writeObject(dataBuf().array());
+	}
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		in.defaultReadObject();
+		byte[] octets = (byte[]) in.readObject();
+		if (octets.length != 16) {
+			throw new IllegalArgumentException("UUIDs must be 16 octets long");
+		}
+		this.dataBuffer = ByteBuffer.wrap(octets);
 	}
 
 }
