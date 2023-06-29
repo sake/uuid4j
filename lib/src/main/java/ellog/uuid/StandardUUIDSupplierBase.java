@@ -21,17 +21,40 @@ package ellog.uuid;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+/**
+ * Base class with common functionality for StandardUUID suppliers.
+ */
 public abstract class StandardUUIDSupplierBase implements Supplier<StandardUUID> {
 
+	/**
+	 * The builder used to create the UUIDs.
+	 */
 	protected StandardUUIDBuilder builder;
+
+	/**
+	 * Create a new supplier for standard UUIDs with the given builder.
+	 * @param builder The builder to use.
+	 */
 	protected StandardUUIDSupplierBase(StandardUUIDBuilder builder) {
 		this.builder = builder;
 	}
+
+	/**
+	 * Create a new supplier for standard UUIDs with the given version.
+	 * @param version The version to use.
+	 */
 	protected StandardUUIDSupplierBase(StandardVersion version) {
 		this(new StandardUUIDBuilder());
 		builder.setVersion(version);
 	}
 
+	/**
+	 * Create an infinite stream with the given supplier.
+	 *
+	 * Note that the stream is not parallelizable as the UUIDs are generated with only one builder which is not thread safe.
+	 *
+	 * @return An infinite stream of UUIDs.
+	 */
 	public Stream<StandardUUID> toStream() {
 		return Stream.generate(this);
 	}

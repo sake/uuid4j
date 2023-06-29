@@ -23,21 +23,50 @@ import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 
+/**
+ * Base class for time-based UUID suppliers.
+ */
 public abstract class TimeBasedSupplier extends StandardUUIDSupplierBase {
+
+	/**
+	 * The time provider used to get the current time.
+	 */
 	protected final TimeProviderV1 timeProvider;
 
+	/**
+	 * Create a new time-based UUID supplier.
+	 * @param version The version to use.
+	 */
 	public TimeBasedSupplier(StandardVersion version) {
 		this(version, TimeProviderV1.create());
 	}
+
+	/**
+	 * Create a new time-based UUID supplier.
+	 * @param version The version to use.
+	 * @param timeProvider The time provider to use.
+	 */
 	public TimeBasedSupplier(StandardVersion version, TimeProviderV1 timeProvider) {
 		super(version);
 		this.timeProvider = timeProvider;
 	}
 
+	/**
+	 * Set the address to used in the node value.
+	 * @param address The address to use.
+	 * @return This supplier for method chaining.
+	 */
 	public TimeBasedSupplier setAddress(long address) {
 		builder.setNode(address);
 		return this;
 	}
+
+	/**
+	 * Set the address to used in the node value.
+	 * @param hwAddr The address to use.
+	 * @return This supplier for method chaining.
+	 * @throws IllegalArgumentException If the address is not 6 bytes long.
+	 */
 	public TimeBasedSupplier setAddress(byte[] hwAddr) {
 		if (hwAddr.length != 6) {
 			throw new IllegalArgumentException("Hardware address must be 6 bytes long");
@@ -51,6 +80,10 @@ public abstract class TimeBasedSupplier extends StandardUUIDSupplierBase {
 		return setAddress(addr);
 	}
 
+	/**
+	 * Load the hardware address of the first non-loopback network interface or a random value if no interface can be used.
+	 * @return This supplier for method chaining.
+	 */
 	public TimeBasedSupplier loadHostAddress() {
 		try {
 			for (NetworkInterface next : Collections.list(NetworkInterface.getNetworkInterfaces())) {
@@ -69,11 +102,21 @@ public abstract class TimeBasedSupplier extends StandardUUIDSupplierBase {
 		// nothing found fall back to random
 		return this.loadRandomAddress();
 	}
+
+	/**
+	 * Load a random address into the node value.
+	 * @return This supplier for method chaining.
+	 */
 	public TimeBasedSupplier loadRandomAddress() {
 		builder.setRandomNodeAddress();
 		return this;
 	}
 
+	/**
+	 * Set the clock sequence to use.
+	 * @param sequence The clock sequence to use.
+	 * @return This supplier for method chaining.
+	 */
 	protected TimeBasedSupplier setClockSequence(int sequence) {
 		builder.setClockSequence(sequence);
 		return this;

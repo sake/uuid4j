@@ -315,18 +315,42 @@ x	 */
 	}
 
 
+	/**
+	 * Create a random UUID according to version 4.
+	 * @return The newly generated UUID.
+	 */
 	public static UUID createRandom() {
 		return StandardUUID.createRandom();
 	}
 
+	/**
+	 * Create a name based UUID according to version 5.
+	 * @param namespace The namespace UUID.
+	 * @param name The name.
+	 * @return The newly generated UUID.
+	 */
 	public static UUID createNameBased(UUID namespace, byte[] name) {
 		return StandardUUID.createNameBased(namespace, name);
 	}
 
+	/**
+	 * Create a time based UUID according to version 1.
+	 *
+	 * This method uses a global time supplier which is synchronized in order to guarantee the uniqueness of the UUIDs.
+	 *
+	 * @return The newly generated UUID.
+	 */
 	public static UUID createTimeV1() {
 		return StandardUUID.createTimeV1();
 	}
 
+	/**
+	 * Create a time based UUID according to version 7.
+	 *
+	 * This method uses a global time supplier which is synchronized in order to guarantee the uniqueness and monotonicity of the UUIDs.
+	 *
+	 * @return The newly generated UUID.
+	 */
 	public static UUID createTimeV7() {
 		return StandardUUID.createTimeV7();
 	}
