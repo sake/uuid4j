@@ -24,12 +24,38 @@ public class StandardUUID extends UUID implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	public StandardUUID(byte[] octets) {
+	protected StandardUUID(byte[] octets) {
 		super(octets, Variant.RFC_4122);
 	}
 
+	/**
+	 * Parse the standard UUID string representation.
+	 *
+	 * The string must satisfy the pattern defined in RFC 4122.
+	 * <pre>
+	 *     01234567-89ab-cdef-0123-456789abcdef
+	 * </pre>
+	 *
+	 * @param uuid The UUID string representation.
+	 * @throws IllegalArgumentException If the string does not satisfy the pattern.
+	 * @throws ClassCastException If the variant is not RFC 4122.
+	 * @return The parsed UUID.
+	 */
 	public static StandardUUID parseHex(String uuid) throws ClassCastException {
 		UUID parsedUuid = UUID.parseHex(uuid);
+		return StandardUUID.class.cast(parsedUuid);
+	}
+
+	/**
+	 * Load the UUID from the given byte array.
+	 * @param bytes The octets of the  UUID.
+	 * @return The UUID object.
+	 * @throws IllegalArgumentException If the octets are not 16 octets long.
+	 * @throws IndexOutOfBoundsException If the variant octet is not reachable.
+	 * @throws ClassCastException If the variant is not RFC 4122.
+	 */
+	public static UUID fromBytes(byte[] bytes) {
+		UUID parsedUuid = UUID.buildVariantObject(bytes);
 		return StandardUUID.class.cast(parsedUuid);
 	}
 
@@ -98,7 +124,7 @@ public class StandardUUID extends UUID implements Serializable {
 		return new Version4Supplier().get();
 	}
 
-	public static StandardUUID createNameBased(StandardUUID namespace, byte[] name) {
+	public static StandardUUID createNameBased(UUID namespace, byte[] name) {
 		return NameBasedSupplier.version5(namespace)
 			.setData(name)
 			.get();
@@ -109,13 +135,6 @@ public class StandardUUID extends UUID implements Serializable {
 	}
 	public static StandardUUID createTimeV1() {
 		return TimeV1Holder.INSTANCE.get();
-	}
-
-	private static class TimeV6Holder {
-		static final TimeV6Supplier INSTANCE = new TimeV6Supplier();
-	}
-	public static StandardUUID createTimeV6() {
-		return TimeV6Holder.INSTANCE.get();
 	}
 
 	private static class TimeV7Holder {

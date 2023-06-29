@@ -28,7 +28,7 @@ public class UUIDv1Test {
 
 	@Test
 	void genMocked() {
-		TimeV1Supplier v1Supplier = new TimeV1Supplier(new TimeProviderV1(false) {
+		TimeV1Supplier v1Supplier = new TimeV1Supplier(new TimeProviderV1() {
 			@Override
 			public long getNextRefTimestamp100ns() {
 				return 0xF123456789ABCDEFL;

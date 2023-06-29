@@ -19,7 +19,10 @@
 package ellog.uuid;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UUIDv7Test {
 
@@ -34,4 +37,15 @@ public class UUIDv7Test {
 		assertTrue(uuid2.compareTo(uuid1) > 0);
 	}
 
+	@Test
+	void testOrderedBatch() {
+		TimeV7Supplier supplier = new TimeV7Supplier();
+		Optional<StandardUUID> lastUUID = supplier.toStream()
+			.limit(100000)
+			.reduce((uuid1, uuid2) -> {
+				assertTrue(uuid1.compareTo(uuid2) < 0);
+				return uuid2;
+			});
+		assertTrue(lastUUID.isPresent());
+	}
 }

@@ -27,7 +27,7 @@ public abstract class TimeBasedSupplier extends StandardUUIDSupplierBase {
 	protected final TimeProviderV1 timeProvider;
 
 	public TimeBasedSupplier(StandardVersion version) {
-		this(version, new TimeProviderV1());
+		this(version, TimeProviderV1.create());
 	}
 	public TimeBasedSupplier(StandardVersion version, TimeProviderV1 timeProvider) {
 		super(version);

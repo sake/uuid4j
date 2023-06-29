@@ -28,13 +28,26 @@ public class TimeProviderV1 {
 
 	protected Instant lastInstant = Instant.MIN;
 	protected Clock clock = Clock.systemUTC();
-	protected final boolean withLock;
 
-	public TimeProviderV1() {
-		this(true);
+	protected TimeProviderV1() {
 	}
-	public TimeProviderV1(boolean withLock) {
-		this.withLock = withLock;
+
+	public static TimeProviderV1 create() {
+		return create(true);
+	}
+	public static TimeProviderV1 create(boolean withLock) {
+		if (withLock) {
+			return new TimeProviderV1Locked();
+		} else {
+			return new TimeProviderV1();
+		}
+	}
+
+	private static class TimeProviderV1Locked extends TimeProviderV1 {
+		@Override
+		public synchronized Instant getNext(long nanoPrecision) {
+			return super.getNext(nanoPrecision);
+		}
 	}
 
 	public TimeProviderV1 setClock(Clock clock) {
@@ -43,17 +56,6 @@ public class TimeProviderV1 {
 	}
 
 	public Instant getNext(long nanoPrecision) {
-		if (withLock) {
-			return getNextLockedInternal(nanoPrecision);
-		} else {
-			return getNextInternal(nanoPrecision);
-		}
-	}
-
-	private synchronized Instant getNextLockedInternal(long nanoPrecision) {
-		return getNextInternal(nanoPrecision);
-	}
-	private Instant getNextInternal(long nanoPrecision) {
 		Instant nextInstant = clock.instant();
 		if (nextInstant.isAfter(lastInstant)) {
 			lastInstant = nextInstant;

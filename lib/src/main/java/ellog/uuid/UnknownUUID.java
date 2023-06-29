@@ -20,11 +20,24 @@ package ellog.uuid;
 
 import java.io.Serializable;
 
+/**
+ * A UUID of an unknown or unimplemented variant.
+ *
+ * Instances of this class do not provide any other accessors than the variant as the internal structure is not understood further.
+ */
 public class UnknownUUID extends UUID implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	public UnknownUUID(byte[] octets) {
+	/**
+	 * Create a new UUID from the given octets.
+	 *
+	 * This constructor can be used for every variant as there is no further processing of the internal structure beyond reading the variant field.
+	 *
+	 * @param octets The octets to use for this UUID.
+	 * @throws IllegalArgumentException If the octets are not 16 octets long.
+	 */
+	protected UnknownUUID(byte[] octets) {
 		super(octets);
 	}
 

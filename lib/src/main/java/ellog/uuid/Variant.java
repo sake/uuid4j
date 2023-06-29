@@ -18,22 +18,54 @@
 
 package ellog.uuid;
 
+/**
+ * The variant of a UUID according to RFC 4122.
+ */
 public enum Variant {
+	/** Reserved for NCS compatibility. */
 	NCS,
+	/** The variant specified in RFC 4122. */
 	RFC_4122,
+	/** Reserved for Microsoft compatibility. */
 	MICROSOFT,
+	/** Reserved for future definition. */
 	RESERVED;
 
+	/**
+	 * Extract the variant number from the variant octet.
+	 *
+	 * The variant number are the 3 most significant bits of the 8th octet of the UUID.
+	 *
+	 * @param octet The variant octet to extract the variant number from.
+	 * @return The variant number extracted from the variant octet.
+	 */
 	public static byte numFromVariantOctet(int octet) {
 		int masked = (octet & 0b11100000) >> 5;
 		return (byte) masked;
 	}
 
+	/**
+	 * Extract the variant enum value from the variant octet.
+	 *
+	 * This function is the combination of {@link #numFromVariantOctet(int)} and {@link #fromInt(int)}.
+	 *
+	 * @param num The variant octet.
+	 * @return The variant enum value corresponding to the given variant octet.
+	 */
 	public static Variant fromVariantOctet(int num) {
 		int masked = RESERVED.numFromVariantOctet(num);
 		return Variant.fromInt(masked);
 	}
 
+	/**
+	 * Convert a variant number to a Variant enum.
+	 *
+	 * The variant number has to be extracted from the octet prior to being used in this function.
+	 * It is expected the number is a 3 bit number, meaning only the 3 least significant bits are considered.
+	 *
+	 * @param variantValue The variant number to convert to the enum value.
+	 * @return The variant enum value corresponding to the given number.
+	 */
 	public static Variant fromInt(int variantValue) {
 		if ((variantValue & 0b100) == 0b000) {
 			return NCS;

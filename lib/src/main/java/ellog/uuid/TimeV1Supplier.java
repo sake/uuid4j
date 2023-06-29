@@ -18,11 +18,26 @@
 
 package ellog.uuid;
 
+/**
+ * This class generates time-based UUIDs according to version 1.
+ */
 public class TimeV1Supplier extends TimeBasedSupplier {
 
+	/**
+	 * Create a new supplier using the default time provider.
+	 * @see TimeV1Supplier#TimeV1Supplier(TimeProviderV1)
+	 */
 	public TimeV1Supplier() {
-		this(new TimeProviderV1());
+		this(TimeProviderV1.create());
 	}
+
+	/**
+	 * Create a new supplier using the given time provider.
+	 *
+	 * The address is loaded from the system, falling back to a random value if it is not accessible.
+	 * The clock sequence is set to a random value.
+	 * @param timeProvider The time provider to use.
+	 */
 	public TimeV1Supplier(TimeProviderV1 timeProvider) {
 		super(StandardVersion.TIME_BASED, timeProvider);
 		loadHostAddress();
@@ -38,6 +53,13 @@ public class TimeV1Supplier extends TimeBasedSupplier {
 			.build();
 	}
 
+	/**
+	 * Set the clock sequence value to a random value.
+	 *
+	 * As per RFC 4122, the clock sequence value can be changed in order to avoid collisions.
+	 * This might be necessary, when the precision of the time is not good enough or simply unknown.
+	 * @return This supplier for method chaining.
+	 */
 	public TimeV1Supplier randomClockSequence() {
 		builder.setRandomClockSequence();
 		return this;

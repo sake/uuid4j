@@ -16,6 +16,9 @@
  * along with this software. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * This module provides a UUID implementation of RFC 4122 and the draft with ordered time-based versions.
+ */
 module org.electrologic.uuid {
 	exports ellog.uuid;
 }

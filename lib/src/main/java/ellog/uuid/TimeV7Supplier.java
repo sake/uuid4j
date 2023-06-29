@@ -18,19 +18,40 @@
 
 package ellog.uuid;
 
-
+/**
+ * This class generates ordered time-based UUIDs according to version 7.
+ */
 public class TimeV7Supplier extends StandardUUIDSupplierBase {
 
+	/**
+	 * The provider of the current time and collision counter value.
+	 */
 	protected final TimeProviderV7 timeProvider;
+	/**
+	 * The length of the collision counter in bits in the final UUID.
+	 */
 	protected final int fixedCounterLength;
 
+	/**
+	 * Create a new time-based UUID supplier.
+	 *
+	 * The counter length is recommended to be between 12 and 42 bits.
+	 * This implementation can process values between 0 and 26 as only the high timestamp and clock sequence values are used for the counter.
+	 *
+	 * @param timeProvider The provider of the current time and collision counter value.
+	 * @param counterLength The length of the collision counter in bits in the final UUID.
+	 */
 	public TimeV7Supplier(TimeProviderV7 timeProvider, int counterLength) {
 		super(StandardVersion.TIME_BASED_ORDERED);
 		this.timeProvider = timeProvider;
 		this.fixedCounterLength = counterLength;
 	}
+
+	/**
+	 * Create a new time-based UUID supplier with a default counter length of 12 bits.
+	 */
 	public TimeV7Supplier() {
-		this(new TimeProviderV7(), 12);
+		this(TimeProviderV7.create(), 12);
 	}
 
 	private short counterOrRand(int numCounterBits, int counter, int numWidth) {

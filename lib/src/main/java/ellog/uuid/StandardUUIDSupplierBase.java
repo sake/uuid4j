@@ -19,6 +19,7 @@
 package ellog.uuid;
 
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public abstract class StandardUUIDSupplierBase implements Supplier<StandardUUID> {
 
@@ -29,6 +30,10 @@ public abstract class StandardUUIDSupplierBase implements Supplier<StandardUUID>
 	protected StandardUUIDSupplierBase(StandardVersion version) {
 		this(new StandardUUIDBuilder());
 		builder.setVersion(version);
+	}
+
+	public Stream<StandardUUID> toStream() {
+		return Stream.generate(this);
 	}
 
 }

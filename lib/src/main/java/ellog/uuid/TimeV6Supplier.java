@@ -18,8 +18,14 @@
 
 package ellog.uuid;
 
+/**
+ * This class generates ordered time-based UUIDs according to version 6.
+ */
 public class TimeV6Supplier extends TimeBasedSupplier {
 
+	/**
+	 * Create a new supplier with a random address and clock sequence.
+	 */
 	public TimeV6Supplier() {
 		super(StandardVersion.TIME_BASED_ORDERED_LEGACY);
 		loadRandomAddress();

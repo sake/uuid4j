@@ -18,10 +18,34 @@
 
 package ellog.uuid;
 
+import java.security.SecureRandom;
+
+/**
+ * This class generates random UUIDs according to version 4.
+ */
 public class Version4Supplier extends StandardUUIDSupplierBase {
+
+	/**
+	 * Create a new supplier for version 4 UUIDs.
+	 *
+	 * This constructor allows to customize the random number generator.
+	 *
+	 * @param random The random number generator to use.
+	 */
+	public Version4Supplier(SecureRandom random) {
+		this();
+		builder.setRandomImpl(random);
+	}
+
+	/**
+	 * Create a new supplier for version 4 UUIDs.
+	 *
+	 * This constructor uses the default random number generator.
+	 */
 	public Version4Supplier() {
 		super(StandardVersion.RANDOM);
 	}
+
 	@Override
 	public StandardUUID get() {
 		return builder.setRandomTimestamp()
