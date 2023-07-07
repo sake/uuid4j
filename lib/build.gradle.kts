@@ -1,3 +1,6 @@
+import org.gradle.plugins.signing.signatory.internal.gnupg.GnupgSignatoryProvider
+import org.gradle.security.internal.gnupg.GnupgSignatory
+
 plugins {
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
@@ -51,9 +54,18 @@ artifacts {
 
 
 signing {
-	useGpgCmd()
+	// override provider, so we can set the prefix for the signing key property
+	val keyPrefix = "ellog"
+	val sigProv = object : GnupgSignatoryProvider() {
+		override fun getDefaultSignatory(project: Project?): GnupgSignatory? {
+			return getSignatory(keyPrefix)
+		}
+	}
+	sigProv.createSignatoryFor(project, keyPrefix, emptyArray())
+	signatories = sigProv
+
+
 	sign(publishing.publications)
-//	sign(configurations.archives.get())
 }
 
 publishing {
