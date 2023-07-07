@@ -8,6 +8,17 @@ While only the [RFC 4122](https://www.rfc-editor.org/rfc/rfc4122) variant is imp
 
 This library provides functionality to read and generate UUIDs.
 
+The library is available on maven central.
+
+For maven use the following dependency:
+```xml
+<dependency>
+  <groupId>org.electrologic</groupId>
+  <artifactId>uuid4j</artifactId>
+  <version>${uuid4j.version}</version>
+</dependency>
+```
+
 ## Reading UUIDs
 
 There are static functions in the UUID and StandardUUID class to instantiate UUIDs from encoded form and from raw bytes.
