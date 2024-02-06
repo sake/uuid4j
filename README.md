@@ -1,7 +1,7 @@
 # About
 
 The electrologic UUID library is an extensible library for processing UUIDs.
-It has been created as the UUID class bundled in the JRE is not capable of generating the new variants described in this [RFC draft](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-04.html).
+It has been created as the UUID class bundled in the JRE is not capable of generating the new variants described in this [RFC draft](https://datatracker.ietf.org/doc/html/draft-ietf-uuidrev-rfc4122bis-14).
 While only the [RFC 4122](https://www.rfc-editor.org/rfc/rfc4122) variant is implemented, other variants could be added if there is the need for it.
 
 # Usage
@@ -24,7 +24,7 @@ For maven use the following dependency:
 There are static functions in the UUID and StandardUUID class to instantiate UUIDs from encoded form and from raw bytes.
 The specialized class StandardUUID is only needed if the field properties need to be read.
 For simple serialization, deserialization and comparison, the UUID class is sufficient.
-When reading a UUID with the UUID class, also the specialiced variant is emitted, however the result must be cast.
+When reading a UUID with the UUID class, also the specialized variant is emitted, however the result must be cast.
 
 ```java
 // read a UUID from a string

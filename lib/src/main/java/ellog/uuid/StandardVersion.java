@@ -22,7 +22,7 @@ package ellog.uuid;
  * The UUID version as defined in RFC 4122 and the new UUID version draft.
  *
  * @see <a href="https://tools.ietf.org/html/rfc4122">RFC 4122</a>
- * @see <a href="https://datatracker.ietf.org/doc/html/draft-peabody-dispatch-new-uuid-format-04">New UUID Format Draft</a>
+ * @see <a href="https://datatracker.ietf.org/doc/html/draft-ietf-uuidrev-rfc4122bis-14">New UUID Format Draft</a>
  */
 public enum StandardVersion {
 	/** Version 1: Time-based with MAC address. */
