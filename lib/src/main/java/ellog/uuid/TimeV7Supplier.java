@@ -64,7 +64,8 @@ public class TimeV7Supplier extends StandardUUIDSupplierBase {
 				result = (short) (builder.getSecRandom().nextInt());
 			}
 			// set counter to leading bits
-			result = (short) (result | (counter << (numWidth - numCounterBits)));
+			int randMask = (1 << (numWidth-numCounterBits)) - 1;
+			result = (short) ((result & randMask) | (counter << (numWidth - numCounterBits)));
 		} else {
 			result = counter;
 		}
