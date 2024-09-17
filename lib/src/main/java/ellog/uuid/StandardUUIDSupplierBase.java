@@ -60,10 +60,18 @@ public abstract class StandardUUIDSupplierBase implements Supplier<StandardUUID>
 		builder.setVersion(version);
 	}
 
+	/**
+	 * Check if this supplier is thread safe.
+	 * @return True if the supplier is thread safe, false otherwise.
+	 */
 	public boolean isSynchronized() {
 		return isSynchronized;
 	}
 
+	/**
+	 * Set if this supplier is thread safe.
+	 * @param isSynchronized True if the supplier is thread safe, false otherwise.
+	 */
 	public void setSynchronized(boolean isSynchronized) {
 		this.isSynchronized = isSynchronized;
 	}
