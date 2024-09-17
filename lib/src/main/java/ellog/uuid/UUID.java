@@ -293,7 +293,7 @@ x	 */
 	public boolean equals(Object obj) {
 		if (obj instanceof UUID) {
 			UUID other = (UUID) obj;
-			return Arrays.equals(dataBuf().array(), other.dataBuf().array());
+			return this.compareTo(other) == 0;
 		} else {
 			return false;
 		}
