@@ -314,6 +314,10 @@ x	 */
 		}
 	}
 
+	@Override
+	public int hashCode() {
+		return this.dataBuffer.hashCode();
+	}
 
 	/**
 	 * Create a random UUID according to version 4.
