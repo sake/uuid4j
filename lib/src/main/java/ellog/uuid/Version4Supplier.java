@@ -23,7 +23,16 @@ import java.security.SecureRandom;
 /**
  * This class generates random UUIDs according to version 4.
  */
-public class Version4Supplier extends StandardUUIDSupplierBase {
+public class Version4Supplier extends StandardUUIDSupplierBase implements Cloneable {
+
+	@Override
+	public Version4Supplier clone() {
+		try {
+			return (Version4Supplier) super.clone();
+		} catch (CloneNotSupportedException ex) {
+			throw new RuntimeException("Cloning of Version4Supplier failed.", ex);
+		}
+	}
 
 	/**
 	 * Create a new supplier for version 4 UUIDs.

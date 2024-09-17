@@ -26,7 +26,7 @@ import java.security.SecureRandom;
  *
  * Note that this class is not thread-safe as it mutates its state.
  */
-public class StandardUUIDBuilder {
+public class StandardUUIDBuilder implements Cloneable {
 
 	private static class RandomHolder {
 		static SecureRandom numberGenerator = new SecureRandom();
@@ -40,6 +40,15 @@ public class StandardUUIDBuilder {
 	private long node;
 
 	private SecureRandom rand;
+
+	@Override
+	public StandardUUIDBuilder clone() {
+		try {
+			return (StandardUUIDBuilder) super.clone();
+		} catch (CloneNotSupportedException ex) {
+			throw new RuntimeException("Cloning of UUID builder failed.", ex);
+		}
+	}
 
 	/**
 	 * Set the random number generator implementation.

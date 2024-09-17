@@ -21,7 +21,16 @@ package ellog.uuid;
 /**
  * This class generates ordered time-based UUIDs according to version 6.
  */
-public class TimeV6Supplier extends TimeBasedSupplier {
+public class TimeV6Supplier extends TimeBasedSupplier implements Cloneable {
+
+	@Override
+	public TimeV6Supplier clone() {
+		try {
+			return (TimeV6Supplier) super.clone();
+		} catch (CloneNotSupportedException ex) {
+			throw new RuntimeException("Cloning of TimeV6Supplier failed.", ex);
+		}
+	}
 
 	/**
 	 * Create a new supplier with a random address and clock sequence.

@@ -21,7 +21,7 @@ package ellog.uuid;
 /**
  * This class generates ordered time-based UUIDs according to version 7.
  */
-public class TimeV7Supplier extends StandardUUIDSupplierBase {
+public class TimeV7Supplier extends StandardUUIDSupplierBase implements Cloneable {
 
 	/**
 	 * The provider of the current time and collision counter value.
@@ -31,6 +31,15 @@ public class TimeV7Supplier extends StandardUUIDSupplierBase {
 	 * The length of the collision counter in bits in the final UUID.
 	 */
 	protected final int fixedCounterLength;
+
+	@Override
+	public TimeV7Supplier clone() {
+		try {
+			return (TimeV7Supplier) super.clone();
+		} catch (CloneNotSupportedException ex) {
+			throw new RuntimeException("Cloning of TimeV7Supplier failed.", ex);
+		}
+	}
 
 	/**
 	 * Create a new time-based UUID supplier.

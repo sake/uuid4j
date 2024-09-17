@@ -32,7 +32,7 @@ import java.security.NoSuchAlgorithmException;
  *
  * @see <a href="https://tools.ietf.org/html/rfc4122#section-4.3">RFC 4122 § 4.3</a>
  */
-public class NameBasedSupplier extends StandardUUIDSupplierBase {
+public class NameBasedSupplier extends StandardUUIDSupplierBase implements Cloneable {
 
 	/** The namespace UUID for DNS names according to RFC 4122 Appendix C. */
 	public static final StandardUUID NS_DNS = StandardUUID.parseHex("6ba7b810-9dad-11d1-80b4-00c04fd430c8");
@@ -44,11 +44,25 @@ public class NameBasedSupplier extends StandardUUIDSupplierBase {
 	public static final StandardUUID NS_X500 = StandardUUID.parseHex("6ba7b814-9dad-11d1-80b4-00c04fd430c8");
 
 	/** The message digest used to calculate the hash. */
-	protected final MessageDigest digest;
+	protected MessageDigest digest;
 	/** The namespace UUID. */
 	protected UUID namespace;
 	/** The name data. */
 	protected byte[] data;
+
+	@Override
+	public NameBasedSupplier clone() {
+		try {
+			NameBasedSupplier clone = (NameBasedSupplier) super.clone();
+			clone.digest = (MessageDigest) digest.clone();
+			if (data != null) {
+				clone.data = data.clone();
+			}
+			return clone;
+		} catch (CloneNotSupportedException ex) {
+			throw new RuntimeException("Cloning of NameBasedSupplier failed.", ex);
+		}
+	}
 
 	/**
 	 * Create a new name-based UUID supplier.

@@ -31,6 +31,12 @@ public abstract class StandardUUIDSupplierBase implements Supplier<StandardUUID>
 	 */
 	protected StandardUUIDBuilder builder;
 
+	protected StandardUUIDSupplierBase clone() throws CloneNotSupportedException {
+		StandardUUIDSupplierBase clone = (StandardUUIDSupplierBase) super.clone();
+		clone.builder = builder.clone();
+		return clone;
+	}
+
 	/**
 	 * Create a new supplier for standard UUIDs with the given builder.
 	 * @param builder The builder to use.
