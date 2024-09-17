@@ -30,11 +30,11 @@ import java.time.Clock;
 public class TimeProviderV7 {
 
 	/**
-	 * The last milliseconds timestamp emitted, or the mimimal possible value if none was emitted yet.
+	 * The last milliseconds timestamp emitted, or the minimal possible value if none was emitted yet.
 	 */
 	protected long lastMillis = 0;
 	/**
-	 * The last counter value emitted, or the mimimal possible value if none was emitted yet.
+	 * The last counter value emitted, or the minimal possible value if none was emitted yet.
 	 */
 	protected int counter = 0;
 	/**
