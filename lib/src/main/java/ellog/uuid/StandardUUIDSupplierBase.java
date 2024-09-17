@@ -31,6 +31,12 @@ public abstract class StandardUUIDSupplierBase implements Supplier<StandardUUID>
 	 */
 	protected StandardUUIDBuilder builder;
 
+	/**
+	 * Flag to indicate if the supplier is synchronized.
+	 * Setting this to false means that the supplier function is not thread safe, so other measures need to be taken, such als cloning the supplier.
+	 */
+	protected boolean isSynchronized = true;
+
 	protected StandardUUIDSupplierBase clone() throws CloneNotSupportedException {
 		StandardUUIDSupplierBase clone = (StandardUUIDSupplierBase) super.clone();
 		clone.builder = builder.clone();
@@ -52,6 +58,14 @@ public abstract class StandardUUIDSupplierBase implements Supplier<StandardUUID>
 	protected StandardUUIDSupplierBase(StandardVersion version) {
 		this(new StandardUUIDBuilder());
 		builder.setVersion(version);
+	}
+
+	public boolean isSynchronized() {
+		return isSynchronized;
+	}
+
+	public void setSynchronized(boolean isSynchronized) {
+		this.isSynchronized = isSynchronized;
 	}
 
 	/**

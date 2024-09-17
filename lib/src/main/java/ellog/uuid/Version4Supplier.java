@@ -19,6 +19,7 @@
 package ellog.uuid;
 
 import java.security.SecureRandom;
+import java.util.function.Supplier;
 
 /**
  * This class generates random UUIDs according to version 4.
@@ -57,9 +58,16 @@ public class Version4Supplier extends StandardUUIDSupplierBase implements Clonea
 
 	@Override
 	public StandardUUID get() {
-		return builder.setRandomTimestamp()
+		Supplier<StandardUUID> buildFun = () -> builder.setRandomTimestamp()
 			.setRandomClockSequence()
 			.setRandomNode()
 			.build();
+		if (isSynchronized()) {
+			synchronized (builder) {
+				return buildFun.get();
+			}
+		} else {
+			return buildFun.get();
+		}
 	}
 }

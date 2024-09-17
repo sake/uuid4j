@@ -18,6 +18,8 @@
 
 package ellog.uuid;
 
+import java.util.function.Supplier;
+
 /**
  * This class generates ordered time-based UUIDs according to version 6.
  */
@@ -44,8 +46,16 @@ public class TimeV6Supplier extends TimeBasedSupplier implements Cloneable {
 	@Override
 	public StandardUUID get() {
 		long ts = timeProvider.getNextRefTimestamp100ns();
-		return builder.setTimestamp(ts)
+
+		Supplier<StandardUUID> buildFun = () -> builder.setTimestamp(ts)
 			.build();
+		if (isSynchronized()) {
+			synchronized (builder) {
+				return buildFun.get();
+			}
+		} else {
+			return buildFun.get();
+		}
 	}
 
 }

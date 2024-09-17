@@ -21,6 +21,7 @@ package ellog.uuid;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.function.Supplier;
 
 /**
  * A supplier for UUIDs based on a name and a namespace.
@@ -139,12 +140,20 @@ public class NameBasedSupplier extends StandardUUIDSupplierBase implements Clone
 		byte[] hash = digest.digest();
 		ByteBuffer hashView = ByteBuffer.wrap(hash);
 
-		return builder.setTimestampLow(hashView.getInt(0))
-			.setTimestampMid(hashView.getShort(4))
-			.setTimestampHigh(hashView.getShort(6))
-			.setClockSequence(hashView.getShort(8))
-			// leading bits are cut by the builder, so extract long including earlier positions
-			.setNode(hashView.getLong(8))
-			.build();
+		Supplier<StandardUUID> buildFun = () -> builder.setTimestampLow(hashView.getInt(0))
+				.setTimestampMid(hashView.getShort(4))
+				.setTimestampHigh(hashView.getShort(6))
+				.setClockSequence(hashView.getShort(8))
+				// leading bits are cut by the builder, so extract long including earlier positions
+				.setNode(hashView.getLong(8))
+				.build();
+		if (isSynchronized()) {
+			synchronized (builder) {
+				return buildFun.get();
+			}
+		} else {
+			return buildFun.get();
+		}
 	}
+
 }
